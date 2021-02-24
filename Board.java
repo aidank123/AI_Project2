@@ -9,7 +9,7 @@ public class Board{
       for(int j = 0; j < board[i].length; j++)
         board[i][j] = false;
   }
-
+  //return False if queen is already at that square 
   public boolean placeQueenAt(int x, int y){
     boolean temp = board[x][y];
     board[x][y] = true;
