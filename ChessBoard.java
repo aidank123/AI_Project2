@@ -57,12 +57,11 @@ public class ChessBoard{
         System.out.printf("%d ", board[i][j].attacks);
       }
   }
-
+  public int getAttacks(int x, int y){
+    return board[x][y].attacks;
+  }
   public boolean queenAt(int x, int y){
     return board[x][y].queen;
-  }
-  public boolean onBoard(int x, int y){
-    return x > -1 && y > -1 && x < board.length && y < board[x].length;
   }
 
   class Square{
