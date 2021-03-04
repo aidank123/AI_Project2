@@ -10,7 +10,7 @@ import java.io.IOException;
 			Scanner sc2 = new Scanner(System.in);
 			String board_name = "";
 			int userInput;
-			
+
 			System.out.println("Would you like to solve a sudoku board or the n-queens problem? Enter a 1 for sudoku or a 2 for n-queens.");
 			userInput = sc1.nextInt();
 
@@ -18,22 +18,24 @@ import java.io.IOException;
 
 				System.out.println("Please type in what board you would like to solve: ");
 				board_name = sc2.nextLine();
-					
+
 				b.printBoard(board_name);
-			
+
 			} else if (userInput == 2) {
 				System.out.println("n-queens problem");
-				
+				System.out.print("What is your n: ");
+				int n = sc2.nextInt();
+				System.out.println("Doing hill climbing...");
+				ChessHillClimber game = new ChessHillClimber(n);
+
 			} else {
 				System.out.println("Incorrect user input.");
 				System.out.println("Exiting... please restart the program.");
 				System.exit(0);
 			}
-			
+
 			sc1.close();
 			sc2.close();
-			
+
 		}
 	}
-
-
