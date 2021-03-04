@@ -26,8 +26,9 @@ import java.io.IOException;
 				System.out.print("What is your n: ");
 				int n = sc2.nextInt();
 				System.out.println("Doing hill climbing...");
-				ChessHillClimber game = new ChessHillClimber(n);
-
+				new ChessHillClimber(n);
+				System.out.println("Doing simulated annealing...");
+				new ChessSimulatedAnnealing(n);
 			} else {
 				System.out.println("Incorrect user input.");
 				System.out.println("Exiting... please restart the program.");
