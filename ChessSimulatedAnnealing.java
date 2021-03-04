@@ -17,7 +17,7 @@ public class ChessSimulatedAnnealing{
   }
   public void play(){
     Random rand = new Random();
-    while(temperature > .001 && cost != 0){
+    while(temperature > .0001 && cost != 0){
       int propRow;
       do{
         propRow = rand.nextInt(n);
