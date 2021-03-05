@@ -4,7 +4,7 @@ import java.util.Stack;
 import java.util.Scanner;
 import java.util.Random;
 
-public class HillClimbing {
+public class HillClimbingVerbose {
 
 	SudokuBoard board = new SudokuBoard();
 	static int rows = 25;
@@ -17,15 +17,14 @@ public class HillClimbing {
 	private int currentY;
 	Scanner sc = new Scanner(System.in);
 
-	public HillClimbing(String board_name) {
+	public HillClimbingVerbose(String board_name) {
 		
-		HillClimbing.board_name = board_name;
+		HillClimbingVerbose.board_name = board_name;
 		
 	}
 	//THIS IS THE MAIN METHOD THAT WILL RUN THE HILL CLIMBING ALGORITHM
 	
 	//IT CALCULATES THE NEIGHBOR OF LOWEST COST AND PERFORMS A SWAP ON THAT VALUE
-	
 	public boolean hillClimbingSolution() throws FileNotFoundException, IOException, InterruptedException, NullPointerException {
 		
 		//IMPORT BOARD AND CALL SETCURRENTBOARD METHOD
@@ -107,240 +106,296 @@ public class HillClimbing {
 					e = costEastSwap(getCurrentX(), getCurrentY());
 				}
 				
+				System.out.println("Number of conflicts at current position " + c + "\nNumber of conflicts if swapping to the north: " + n + "\nNumber of conflicts if swapping to the south: " + s + "\nNumber of conflicts if swapping to the west: " + w  + "\nNumber of conflicts if swapping to the east: " + e);
 				//CHOOSING THE BEST NEIGHBOR
 				if (n <= c && n < s && n < w && n < e){
-					
 					northSwap(getCurrentX(), getCurrentY());
+					System.out.println("Move north chosen.");
 					board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 				} else if (s <= c && s < n && s < w && s < e) {
 					
 					southSwap(getCurrentX(), getCurrentY());
+					System.out.println("Move south chosen.");
 					board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 				} else if (e <= c && e < n && e < s && e < w) {
 					
 					eastSwap(getCurrentX(), getCurrentY());
+					System.out.println("Move east chosen.");
 					board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 				} else if (w <= c && w < n && w < s && w < e) {
 					
 					westSwap(getCurrentX(), getCurrentY());
+					System.out.println("Move west chosen.");
 					board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 				} else if (n == s && n < e && n < w && n < c) {
 					random = r.nextInt(2);
 					if (random == 0) {
 						northSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move north chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					} else {
 						southSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move south chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					}
 				} else if (n == e && n < s && n < w && n < c) {
 					random = r.nextInt(2);
 					if (random == 0) {
 						northSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move north chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					} else {
 						eastSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move east chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					}
 				} else if (n == w && n < s && n < e && n < c) {
 					random = r.nextInt(2);
 					if (random == 0) {
 						northSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move north chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					} else {
 						westSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move west chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					}
 				} else if (w == s && w < e && w < n && w < c) {
 					random = r.nextInt(2);
 					if (random == 0) {
 						westSwap(getCurrentX(), getCurrentY());
+						System.out.println("West swap chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					} else {
 						southSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move south chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					}
 				} else if (w == e && w < s && w < n && w < c) {
 					random = r.nextInt(2);
 					if (random == 0) {
 						westSwap(getCurrentX(), getCurrentY());
+						System.out.println("West swap chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					} else {
 						eastSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move east chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					}
 				} else if (e == s && e < w && e < n && e < c) {
 					random = r.nextInt(2);
 					if (random == 0) {
-						eastSwap(getCurrentX(), getCurrentY());;
+						eastSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move east chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					} else {
 						southSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move south chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					}
 				} else if (n == s && n == e && n < w && n < c) {
 					random = r.nextInt(3);
 					if (random == 0) {
 						northSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move north chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					} else if (random == 1) {
 						southSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move south chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					} else {
 						eastSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move east chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					}
 				} else if (n == s && n == w && n < e && n < c) {
 					random = r.nextInt(3);
 					if (random == 0) {
 						northSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move north chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					} else if (random == 1) {
 						southSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move south chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					} else {
 						westSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move west chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					}
 				} else if (n == w && n == e && n < s && n < c) {
 					random = r.nextInt(3);
 					if (random == 0) {
 						northSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move north chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					} else if (random == 1) {
 						eastSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move east chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					} else {
 						westSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move west chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					}
 				} else if (n == s && n == c && n < e && n < w) {
 					random = r.nextInt(2);
 					if (random == 0) {
 						northSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move north chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					} else {
 						southSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move south chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					}
 				} else if (n == e && n == c && n < s && n < w) {
 					random = r.nextInt(2);
 					if (random == 0) {
 						northSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move north chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					} else {
 						eastSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move east chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					}
 				} else if (n == w && n == c && n < s && n < e) {
 					random = r.nextInt(2);
 					if (random == 0) {
 						northSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move north chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					} else {
 						westSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move west chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					}
 				} else if (s == w && s == e && s < n && s < c) {
 					random = r.nextInt(3);
 					if (random == 0) {
 						southSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move south chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					} else if (random == 1) {
 						westSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move west chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					} else {
 						eastSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move east chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					}
 				} else if (s == e && s == c && s < n && s < w) {
 					random = r.nextInt(2);
 					if (random == 0) {
 						southSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move south chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					} else {
 						eastSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move east chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					}
 				} else if (s == w && s == c && s < n && s < e) {
 					random = r.nextInt(2);
 					if (random == 0) {
 						southSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move south chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					} else {
 						westSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move west chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					}
 				} else if (e == w && e == c && e < n && e < s) {
 					random = r.nextInt(2);
 					if (random == 0) {
 						eastSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move east chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					} else {
 						westSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move west chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					}
 				} else if (n == w && n == e && n == s && n == c) {
 					random = r.nextInt(4);
 					if (random == 0) {
 						southSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move south chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					} else if (random == 1) {
 						westSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move west chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					} else if (random == 2) {
 						eastSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move east chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					} else {
 						northSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move north chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					}
 				} else if (n == s && n == w && n == c && n < e) {
 					random = r.nextInt(3);
 					if (random == 0) {
 						northSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move north chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					} else if (random == 1) {
 						southSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move south chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					} else {
 						westSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move west chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					}
 				} else if (n == s && n == e && n == c && n < w) {
 					random = r.nextInt(3);
 					if (random == 0) {
 						northSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move north chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					} else if (random == 1) {
 						southSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move south chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					} else {
 						eastSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move east chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					}
 				} else if (n == w && n == e && n == c && n < s) {
 					random = r.nextInt(3);
 					if (random == 0) {
 						northSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move north chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					} else if (random == 1) {
 						eastSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move east chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					} else {
 						westSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move west chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					}
 				} else if (s == w && s == e && s == c && s < n) {
 					random = r.nextInt(3);
 					if (random == 0) {
 						southSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move south chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					} else if (random == 1) {
 						westSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move west chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					} else {
 						eastSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move east chosen.");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
 					}
 				} else if (c < n && c < s && c < e && c < w) {
@@ -364,6 +419,7 @@ public class HillClimbing {
 	}
 		return true;
 	}
+
 	//METHOD THAT SWAPS VALUES TO THE NORTH
 	public void northSwap(int x, int y) {
 		

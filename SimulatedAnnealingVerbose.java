@@ -4,7 +4,7 @@ import java.util.Stack;
 import java.util.Scanner;
 import java.util.Random;
 
-public class HillClimbing {
+public class SimulatedAnnealingVerbose {
 
 	SudokuBoard board = new SudokuBoard();
 	static int rows = 25;
@@ -17,16 +17,17 @@ public class HillClimbing {
 	private int currentY;
 	Scanner sc = new Scanner(System.in);
 
-	public HillClimbing(String board_name) {
+	public SimulatedAnnealingVerbose(String board_name) {
 		
-		HillClimbing.board_name = board_name;
+		SimulatedAnnealingVerbose.board_name = board_name;
 		
 	}
-	//THIS IS THE MAIN METHOD THAT WILL RUN THE HILL CLIMBING ALGORITHM
 	
-	//IT CALCULATES THE NEIGHBOR OF LOWEST COST AND PERFORMS A SWAP ON THAT VALUE
+	//THIS IS THE MAIN METHOD OF THIS CLASS, WHICH RUNS THE SIMULATED ANNEALING ALGORITHM.
 	
-	public boolean hillClimbingSolution() throws FileNotFoundException, IOException, InterruptedException, NullPointerException {
+	//INITIAL TEMP: 2.0 GOAL TEMP: 0
+
+	public boolean simulatedAnnealingSolution() throws FileNotFoundException, IOException, InterruptedException, NullPointerException {
 		
 		//IMPORT BOARD AND CALL SETCURRENTBOARD METHOD
 		getBoard();
@@ -39,9 +40,14 @@ public class HillClimbing {
 		int e;
 		int w;
 		int random;
+		int delta = 0;
 		int iterations = 0;
 		int max_iterations = 5000;
 		int starting_conflicts;
+		Double temperature = 2.0;
+		Double cooling_factor = .999;
+		String possible_move = "";
+		
 		
 		//COST OF A MOVE WILL BE SET VERY HIGH IF MOVE WOULD CAUSE AN ARRAY OUT OF BOUNDS EXCEPTION
 		int out_of_bounds = 1000;
@@ -49,306 +55,147 @@ public class HillClimbing {
 		//PRINT INITIAL BOARD
 		board.printBoard(getCurrentBoard());
 		
-		System.out.println("This is the initial Sudoku Board you have selected. \nResize the display if necessary and enter a 1 to solve with the hill climbing algorithm.");
-		int input = sc.nextInt();
-		if (input == 1) {
-			System.out.println("The hill climbing algorithm begins by randomly filling in all subarrays with the missing values 1 - 25.");
-			
-			//RANDOMIZE MISSING NUMBERS IN THE SUBARRAYS
-			setCurrentBoard(replaceMissingNumbers(getCurrentBoard()));
+		System.out.println("This board will now be solved with the simulated annealing algorithm.");
+		System.out.println("The simulated annealing algorithm begins by randomly filling in all subarrays with the missing values 1 - 25.");
 		
-			//PRINT RANDOMIZED BOARD
-			board.updateBoard(getCurrentBoard(),0,0);
+		Thread.sleep(5000);
+		//RANDOMIZE MISSING NUMBERS IN THE SUBARRAYS
+		setCurrentBoard(replaceMissingNumbers(getCurrentBoard()));
+	
+		//PRINT RANDOMIZED BOARD
+		board.updateBoard(getCurrentBoard(),0,0);
+		
+		System.out.println("The simulated annealing algorithm will now start at a random spot on the sudoku board.");
+		System.out.println("The moves available are swapping values with the neighboring spots to the north, south, east, or west.");
+		System.out.println("The algorithm will select one of these at random, heating the temperature if it causes more conflicts and cooling if it causes less.");
+		
+		rand_x = r.nextInt(25);
+		rand_y = r.nextInt(25);
+		
+		setCurrentX(rand_x);
+		setCurrentY(rand_y);
+		
+		starting_conflicts = totalCost(getCurrentBoard());
 			
-			System.out.println("The hill climbing algorithm will now start at a random spot on the sudoku board.");
-			System.out.println("The moves available are swapping values with the neighboring spots to the north, south, east, or west.");
-			System.out.println("The algorithm will select which of these moves causes the least number of conflicts in the board.");
-			
-			rand_x = r.nextInt(25);
-			rand_y = r.nextInt(25);
-			
-			setCurrentX(rand_x);
-			setCurrentY(rand_y);
-			
-			starting_conflicts = totalCost(getCurrentBoard());
-
-			while(totalCost(getCurrentBoard()) != 0) {
+			// while the board is not solved or the temperature has not cooled to 1 
+			while(totalCost(getCurrentBoard()) != 0 || temperature > 1) {
 				 
 				if(iterations < max_iterations) {
-
-				//FINDING THE NUMBER OF CONFLICTS AT CURRENT POSITION
-				c = totalCost(getCurrentBoard());
-				
-				//TOTAL CONFLICTS IF CURRENT POSITION SWAPPED NORTH
-				if (getCurrentX() - 1 < 0) {
-					n = out_of_bounds;
-				} else {
-				n = costNorthSwap(getCurrentX(), getCurrentY());
-				}
-				
-				//TOTAL CONFLICTS IF CURRENT POSITION SWAPPED SOUTH
-				if (getCurrentX() + 1 > (rows - 1)) {
-					s = out_of_bounds;
-				} else {
-					s = costSouthSwap(getCurrentX(), getCurrentY());
-				}
-				
-				//TOTAL CONFLICTS IF CURRENT POSITION SWAPPED WEST
-				if (getCurrentY() - 1 < 0) {
-					w = out_of_bounds;
-				} else {
-					w = costWestSwap(getCurrentX(), getCurrentY());
-				}
-				
-				//TOTAL CONFLICTS IF CURRENT POSITION SWAPPED EAST
-				if (getCurrentY() + 1 > (columns - 1)) {
-					e = out_of_bounds;
-				} else {
-					e = costEastSwap(getCurrentX(), getCurrentY());
-				}
-				
-				//CHOOSING THE BEST NEIGHBOR
-				if (n <= c && n < s && n < w && n < e){
+					System.out.println("Current Temperature: " + temperature);
+					//temperature = temperature * cooling_factor;
+					//FINDING THE NUMBER OF CONFLICTS AT CURRENT POSITION
+					c = totalCost(getCurrentBoard());
 					
-					northSwap(getCurrentX(), getCurrentY());
-					board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-				} else if (s <= c && s < n && s < w && s < e) {
+					//TOTAL CONFLICTS IF CURRENT POSITION SWAPPED NORTH
+					if (getCurrentX() - 1 < 0) {
+						n = out_of_bounds;
+					} else {
+					n = costNorthSwap(getCurrentX(), getCurrentY());
+					}
 					
-					southSwap(getCurrentX(), getCurrentY());
-					board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-				} else if (e <= c && e < n && e < s && e < w) {
+					//TOTAL CONFLICTS IF CURRENT POSITION SWAPPED SOUTH
+					if (getCurrentX() + 1 > (rows - 1)) {
+						s = out_of_bounds;
+					} else {
+						s = costSouthSwap(getCurrentX(), getCurrentY());
+					}
 					
-					eastSwap(getCurrentX(), getCurrentY());
-					board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-				} else if (w <= c && w < n && w < s && w < e) {
+					//TOTAL CONFLICTS IF CURRENT POSITION SWAPPED WEST
+					if (getCurrentY() - 1 < 0) {
+						w = out_of_bounds;
+					} else {
+						w = costWestSwap(getCurrentX(), getCurrentY());
+					}
 					
-					westSwap(getCurrentX(), getCurrentY());
-					board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-				} else if (n == s && n < e && n < w && n < c) {
-					random = r.nextInt(2);
-					if (random == 0) {
-						northSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
+					//TOTAL CONFLICTS IF CURRENT POSITION SWAPPED EAST
+					if (getCurrentY() + 1 > (columns - 1)) {
+						e = out_of_bounds;
 					} else {
-						southSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
+						e = costEastSwap(getCurrentX(), getCurrentY());
 					}
-				} else if (n == e && n < s && n < w && n < c) {
-					random = r.nextInt(2);
-					if (random == 0) {
-						northSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					} else {
-						eastSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					}
-				} else if (n == w && n < s && n < e && n < c) {
-					random = r.nextInt(2);
-					if (random == 0) {
-						northSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					} else {
-						westSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					}
-				} else if (w == s && w < e && w < n && w < c) {
-					random = r.nextInt(2);
-					if (random == 0) {
-						westSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					} else {
-						southSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					}
-				} else if (w == e && w < s && w < n && w < c) {
-					random = r.nextInt(2);
-					if (random == 0) {
-						westSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					} else {
-						eastSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					}
-				} else if (e == s && e < w && e < n && e < c) {
-					random = r.nextInt(2);
-					if (random == 0) {
-						eastSwap(getCurrentX(), getCurrentY());;
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					} else {
-						southSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					}
-				} else if (n == s && n == e && n < w && n < c) {
-					random = r.nextInt(3);
-					if (random == 0) {
-						northSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					} else if (random == 1) {
-						southSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					} else {
-						eastSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					}
-				} else if (n == s && n == w && n < e && n < c) {
-					random = r.nextInt(3);
-					if (random == 0) {
-						northSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					} else if (random == 1) {
-						southSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					} else {
-						westSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					}
-				} else if (n == w && n == e && n < s && n < c) {
-					random = r.nextInt(3);
-					if (random == 0) {
-						northSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					} else if (random == 1) {
-						eastSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					} else {
-						westSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					}
-				} else if (n == s && n == c && n < e && n < w) {
-					random = r.nextInt(2);
-					if (random == 0) {
-						northSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					} else {
-						southSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					}
-				} else if (n == e && n == c && n < s && n < w) {
-					random = r.nextInt(2);
-					if (random == 0) {
-						northSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					} else {
-						eastSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					}
-				} else if (n == w && n == c && n < s && n < e) {
-					random = r.nextInt(2);
-					if (random == 0) {
-						northSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					} else {
-						westSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					}
-				} else if (s == w && s == e && s < n && s < c) {
-					random = r.nextInt(3);
-					if (random == 0) {
-						southSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					} else if (random == 1) {
-						westSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					} else {
-						eastSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					}
-				} else if (s == e && s == c && s < n && s < w) {
-					random = r.nextInt(2);
-					if (random == 0) {
-						southSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					} else {
-						eastSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					}
-				} else if (s == w && s == c && s < n && s < e) {
-					random = r.nextInt(2);
-					if (random == 0) {
-						southSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					} else {
-						westSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					}
-				} else if (e == w && e == c && e < n && e < s) {
-					random = r.nextInt(2);
-					if (random == 0) {
-						eastSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					} else {
-						westSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					}
-				} else if (n == w && n == e && n == s && n == c) {
+				
+					//CHOOSE RANDOM NEIGHBOR
+				
 					random = r.nextInt(4);
-					if (random == 0) {
-						southSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					} else if (random == 1) {
-						westSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					} else if (random == 2) {
-						eastSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
+					if (random == 0 && s < 1000) {
+						possible_move = "s";
+						//southSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move south chosen.");
+						//board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
+						delta = s - c;
+					} else if (random == 1 && w < 1000) {
+						possible_move = "w";
+						//westSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move west chosen.");
+						//board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
+						delta = w - c;
+					} else if (random == 2 && e < 1000) {
+						possible_move = "e";
+						//eastSwap(getCurrentX(), getCurrentY());
+						System.out.println("Move east chosen.");
+						//board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
+						delta = e - c;
+					} else if (random == 3 && n < 1000){
+						possible_move = "n";
+					    //northSwap(getCurrentX(), getCurrentY());
+					    System.out.println("Move north chosen.");
+						//board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
+						delta = n - c;
 					} else {
-						northSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
+						if (n == 1000) {
+							possible_move = "s";
+							//southSwap(getCurrentX(), getCurrentY());
+							delta = s - c;
+						} else if (s == 1000) {
+							possible_move = "n";
+							//northSwap(getCurrentX(), getCurrentY());
+							delta = n - c;
+						} else if (w == 1000) {
+							possible_move = "e";
+							//eastSwap(getCurrentX(), getCurrentY());
+							delta = e - c;
+						} else if (e == 1000) {
+							possible_move = "w";
+							//westSwap(getCurrentX(), getCurrentY());
+							delta = w - c;
+						} else if (e == 1000 && n == 1000) {
+							possible_move = "w";
+							//westSwap(getCurrentX(), getCurrentY());
+							delta = w - c;
+						} else if (w == 1000 && n == 1000) {
+							possible_move = "e";
+							//eastSwap(getCurrentX(), getCurrentY());
+							delta = e - c;
+						} else if (w == 1000 && s == 1000) {
+							possible_move = "e";
+							//eastSwap(getCurrentX(), getCurrentY());
+							delta = e - c;
+						} else if (e == 1000 && s == 1000) {
+							possible_move = "w";
+							//westSwap(getCurrentX(), getCurrentY());
+							delta = w - c;
+						}
 					}
-				} else if (n == s && n == w && n == c && n < e) {
-					random = r.nextInt(3);
-					if (random == 0) {
-						northSwap(getCurrentX(), getCurrentY());
+					
+					if (delta <= 0) {
+						if (possible_move.equals("n")) {
+							northSwap(getCurrentX(), getCurrentY());
+						} else if (possible_move.equals("s")) {
+							southSwap(getCurrentX(), getCurrentY());
+						} else if (possible_move.equals("e")) {
+							eastSwap(getCurrentX(), getCurrentY());
+						} else if (possible_move.equals("w")) {
+							westSwap(getCurrentX(), getCurrentY());
+						}
+						System.out.println("Move accepted and temperature cooled");
 						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					} else if (random == 1) {
-						southSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
+						temperature = temperature * cooling_factor;
+						//good step means cooling the function, which will be handled in the while loop unless otherwise specified
 					} else {
-						westSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
+						if (Math.exp(-delta / temperature) > Math.random()) {
+							board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
+						}
 					}
-				} else if (n == s && n == e && n == c && n < w) {
-					random = r.nextInt(3);
-					if (random == 0) {
-						northSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					} else if (random == 1) {
-						southSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					} else {
-						eastSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					}
-				} else if (n == w && n == e && n == c && n < s) {
-					random = r.nextInt(3);
-					if (random == 0) {
-						northSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					} else if (random == 1) {
-						eastSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					} else {
-						westSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					}
-				} else if (s == w && s == e && s == c && s < n) {
-					random = r.nextInt(3);
-					if (random == 0) {
-						southSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					} else if (random == 1) {
-						westSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					} else {
-						eastSwap(getCurrentX(), getCurrentY());
-						board.updateBoard(getCurrentBoard(),getCurrentX(), getCurrentY());
-					}
-				} else if (c < n && c < s && c < e && c < w) {
-					//local max
-					System.out.println("You have reached a local minimum. This unsolved board started with " + starting_conflicts + " total conflicts and ended with " + c + " total conflicts.");
-					Thread.sleep(5000);
-					return true;
-				} 
 				} else {
 					System.out.println("You have reached the timout condition of 5000 moves. This unsolved board started with " + starting_conflicts + " total conflicts and ended with " + totalCost(getCurrentBoard()) + " total conflicts.");
 					Thread.sleep(5000);
@@ -356,14 +203,19 @@ public class HillClimbing {
 				}
 				Thread.sleep(50);
 				iterations ++;
+
 		}
-			
-			System.out.println("The board is solved!");
-			System.out.println("This board ended with 0 total conflicts.");
-			Thread.sleep(5000);
-	}
+			if (totalCost(getCurrentBoard()) == 0) {
+				System.out.println("The board is solved!");
+				System.out.println("This board ended with 0 total conflicts.");
+				Thread.sleep(5000);
+			} else {
+				System.out.println("The temperature has cooled but the board has not been totally solved.");
+				System.out.println("This unsolved board started with " + starting_conflicts + " total conflicts and ended with " + totalCost(getCurrentBoard()) + " total conflicts.");
+			}	
 		return true;
 	}
+		
 	//METHOD THAT SWAPS VALUES TO THE NORTH
 	public void northSwap(int x, int y) {
 		
@@ -1711,3 +1563,5 @@ public class HillClimbing {
 	}
 	
 }
+
+	
